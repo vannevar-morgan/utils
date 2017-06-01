@@ -94,10 +94,10 @@ def apply_key_filter(text, key_filter):
     
     
 
-ENGLISH_FREQUENCY_LIST_FILENAME = "google-10000-english.txt"
-ENGLISH_FREQUENCY_LIST_USA_FILENAME = "google-10000-english-usa.txt"
-ENGLISH_FREQUENCY_LIST_20K_FILENAME = "20k.txt"
-NEIGHBOR_KEY_MAP_FILENAME = "neighbor_keys_map.txt"
+ENGLISH_FREQUENCY_LIST_FILENAME = "../lookups/google-10000-english.txt"
+ENGLISH_FREQUENCY_LIST_USA_FILENAME = "../lookups/google-10000-english-usa.txt"
+ENGLISH_FREQUENCY_LIST_20K_FILENAME = "../lookups/20k.txt"
+NEIGHBOR_KEY_MAP_FILENAME = "../lookups/neighbor_keys_map.txt"
 
 
 USAGE_MESSAGE = "./ofsme.py input_file output_file"
