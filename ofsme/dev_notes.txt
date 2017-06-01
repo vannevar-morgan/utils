@@ -1,0 +1,17 @@
+ofsme dev notes
+
+>map of synonyms
+>map of antonyms (to phrase as the opposite)
+>note unusual words by word frequency
+>need unusual words exclusion list for contractions
+>change average sentence length
+>abbreviation filter
+>number to word filter and reverse
+>config file to set probabilities (have low, high range)
+>jargon map
+>ebonics map
+>slang map and emojiis :) >_<
+>insert & remove cultural references
+>mis-spelling filter w / commonly mis-spelled words
+>key exchange filter (map of keys to "nearby" keys, including keys using shift)
+>punctuation filter (exchange dots, dashes, spaces after periods, number of question and exclamation marks, etc.)
