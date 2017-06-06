@@ -40,7 +40,6 @@ def get_key_map(key_dict, key_map_filename):
     """
     with open(key_map_filename) as in_file:
         for line in in_file:
-            print(line)
             [key, nearby] = line.split(" ", 1)
             key_dict[key] = [x for x in nearby.replace('\n', '')]
     
@@ -60,10 +59,7 @@ def get_lowercase(words):
     """
     Return a list of all words in a collection, as lowercase
     """
-    temp = []
-    for w in words:
-        temp.append(w.lower())
-    return temp
+    return [w.lower() for w in words]
 
 
 def apply_key_filter(text, key_filter):
@@ -91,8 +87,25 @@ def apply_key_filter(text, key_filter):
             m_line += next_char
         m_text.append(m_line)
     return m_text
+
+
+def get_uncommon_words(word_dict, user_words, word_list):
+    """
+    Count instances of uncommon words.
     
+    Find uncommon words in user_words, add them to the word dict, or increment counter.
+    {key->value}
+    {uncommon word->multiplicity}
     
+    A word is "uncommon" if it isn't in the word frequency word list (20,000 most common English words)
+    """
+    for w in user_words:
+        if w not in word_list:
+            if w not in word_dict:
+                word_dict[w] = 1
+            else:
+                word_dict[w] += 1
+
 
 ENGLISH_FREQUENCY_LIST_FILENAME = "../lookups/google-10000-english.txt"
 ENGLISH_FREQUENCY_LIST_USA_FILENAME = "../lookups/google-10000-english-usa.txt"
@@ -114,8 +127,8 @@ user_text = []
 get_text(user_text, input_filename)
 
 # import word frequency list
-word_list = {}
-get_wordlist(word_list, ENGLISH_FREQUENCY_LIST_20K_FILENAME)
+word_freq_list = {}
+get_wordlist(word_freq_list, ENGLISH_FREQUENCY_LIST_20K_FILENAME)
 
 # import neighbor key map
 key_map = {}
@@ -125,34 +138,18 @@ get_key_map(key_map, NEIGHBOR_KEY_MAP_FILENAME)
 user_words = []
 parse_words(user_words, user_text)
 
-# for line in user_text:
-#     print(line)
 
-# for word in user_words:
-#     print(word)
-
-unique_user_words = set(get_lowercase(user_words))
-
-uncommon_words = {}
-for w in unique_user_words:
-    if w not in word_list:
-        if w not in uncommon_words:
-            uncommon_words[w] = 1
-        else:
-            uncommon_words[w] += 1
+# find uncommon words in user text
+uwords = {}
+get_uncommon_words(uwords, user_words, word_freq_list)
 
 print("these words are uncommon:")
-for w in uncommon_words:
-    print(w + "\t\t" + str(uncommon_words[w]))
+for w in uwords:
+    print(w + "\t\t" + str(uwords[w]))
 
-# print("length of word_list: " + str(len(word_list)))
 
-# print(unique_user_words)
-# print("unique words: " + str(len(unique_user_words)))
-# print("uncommon words: " + str(len(uncommon_words)))
-# print("")
-
-print("text with key exchange:")
+# apply key exchange filter
+print("\n\ntext with key exchange:\n")
 m_text = apply_key_filter(user_text, key_map)
 for line in m_text:
     print(line, end="")
