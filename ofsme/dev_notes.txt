@@ -15,3 +15,6 @@ ofsme dev notes
 >mis-spelling filter w / commonly mis-spelled words
 >key exchange filter (map of keys to "nearby" keys, including keys using shift)
 >punctuation filter (exchange dots, dashes, spaces after periods, number of question and exclamation marks, etc.)
+
+
+i can't find a wordlist of synonyms / antonyms.  i know there are services that provide a lookup but relying on a service isn't ideal.  i'm going to write a script to scrape synonyms / antonyms from a thesaurus site and create a wordlist.
