@@ -1,4 +1,4 @@
-Privacy Tools
+utils
 =============================================
 
 md.py
@@ -6,7 +6,7 @@ md.py
 md.py is a media downloader for youtube, dailymotion, vevo, and clipfish that automates downloads using convert2mp3.net
 
 NOTE:
-You may wish to consider using something like mps-youtube.  I wrote this script just for fun, it's not meant as a replacement.  I put it under privacy_tools because using this script you don't directly touch google ip's.  The download service still sees everything you download.  You still need to know the URL to the video.  Ideally you might consider setting up mps-youtube on a cheap vps to act as a proxy.  Most likely these kinds of download sites are doing something similar.  I expect this script to break eventually, upon any site changes.
+You may wish to consider using something like youtube-dl / mps-youtube.  I wrote this script just for fun, it's not meant as a replacement.  Using this script you don't directly touch google ip's.  The download service still sees everything you download.  You still need to know the URL to the video.  Ideally you might consider setting up youtube-dl / mps-youtube on a cheap vps to act as a proxy.  Most likely these kinds of download sites are doing something similar.  I expect this script to break eventually, upon any site changes.
 
 
 Usage:
@@ -23,9 +23,30 @@ Known Issues:
 >Note that for vevo links, you must use the share link as the url for the video to download.  Otherwise the converter service can't find the video.
 
 
+8ch_scraper.py
+-------------------
+8ch_scraper.py is a media downloader for threads on 8ch.net.
+
+Its intended usage is:
+>./8ch_scraper thread_url dl_dir=./8ch_media_(op_postnum), force_download=False
+
+>use a new tab in terminal for each thread you're monitoring.
+
+>re-run the script occasionally to download new files posted to the thread.
+
+Known Issues:
+
+>Sometimes a file posted to a thread will be downloaded each time the script is run - even if the file already exists (normally, existing files are skipped).  If the file already exists, the new filename will be appended to with a random number so as not to overwrite the original file, unless the force_download flag is set to True.
+
+>Untested on .pdf files
+
+Use wget when appropriate :)
+
+
 Repository Contents
 -------------------
 * **md.py** - Media Downloader for youtube, dailymotion, vevo, and clipfish
+* **8ch_scraper.py** - Media downloader for threads on 8ch.net
 * **ofsme** - Obfuscate Me, a tool to obfuscate your text from stylometric analysis and author attribution tools
 
 
