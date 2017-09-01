@@ -11,10 +11,12 @@ Notes:
 
 >currently there isn't a lot of error handling
 
->rehash changes metadata for files in order to change the hash without changing the file content.
+>rehash changes metadata for files in order to change the hash without changing the file content:
+  -rehash writes a tEXt chunk in .png files
+  -rehash writes a UserComment in exif in .jpg / .jpeg files
 
 >currently the file content may still be altered when used on an original file.
->content will not be altered when used on files written by rehash
+>content will not be altered when used on files written by rehash (unless subsequently modified)
 >i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
 >      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
 >this is because the libraries used for reading and writing media files may not be intended for editing metadata and may provide no simple way of doing so.  when writing the rehash copy with different metadata the file content may be written differently (different compression or other image properties).

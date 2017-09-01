@@ -5,7 +5,6 @@ import os
 import random
 import png
 import piexif
-import binascii
 
 
 def make_rtext():
@@ -34,23 +33,13 @@ def rehash_png(png_filename):
 
 def rehash_jpg(jpg_filename):
     """
-    mutate the meta data in a .jpg file to change the file hash    
+    write ExifIFD.UserComment in .jpg exif to change the file hash    
     """
-    exif_IFD = {piexif.ExifIFD.UserComment: str.encode(REHASH + COMMENT_SEP + make_rtext())}
+    exif_IFD = {piexif.ExifIFD.UserComment: str.encode("\0\0\0\0\0\0\0\0" + REHASH + COMMENT_SEP + make_rtext())}
+    # exif_IFD = {piexif.ImageIFD.ImageDescription: "abcdefghijklmnopqrstuvwxyz0123456789"}
     exif_dict = {"Exif":exif_IFD}
     exif_bytes = piexif.dump(exif_dict)
     piexif.insert(exif_bytes, jpg_filename)
-    
-    # exif_dict = piexif.load(jpg_filename)
-    # comment_text = make_rtext()
-    # print("wrote to exif: " + comment_text)
-    # exif_dict["USER_COMMENT"] = comment_text
-    # exif_bytes = piexif.dump(exif_dict)
-    # piexif.insert(exif_bytes, jpg_filename)
-
-    # exif_dict = {REHASH:make_rtext()}
-    # exif_bytes = piexif.dump(exif_dict)
-    # piexif.insert(exif_bytes, jpg_filename)
 
 
 def rehash_gif(gif_filename):
