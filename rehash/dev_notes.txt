@@ -15,12 +15,14 @@ Notes:
   -rehash writes a tEXt chunk in .png files
   -rehash writes a UserComment in exif in .jpg / .jpeg files
 
->currently the file content may still be altered when used on an original file.
->content will not be altered when used on files written by rehash (unless subsequently modified)
->i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
->      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
->this is because the libraries used for reading and writing media files may not be intended for editing metadata and may provide no simple way of doing so.  when writing the rehash copy with different metadata the file content may be written differently (different compression or other image properties).
->this is not anticipated to cause problems in normal usage and may be improved in the future.
+
+>currently the file content MAY still be altered when used on an original file.
+  -this does not apply to gif files, content is not altered in gif files when inserting comment blocks.
+  -content will not be altered when used on files written by rehash (unless subsequently modified)
+    *i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
+    *      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
+  -this is because the libraries used for reading and writing media files may not be intended for editing metadata and may provide no simple way of doing so.  when writing the rehash copy with different metadata the file content may be written differently (different compression or other image properties).
+  -this is not anticipated to cause problems in normal usage and may be improved in the future.
 
 
 Usage:
@@ -45,11 +47,11 @@ Supported filetypes:
 .png
 .jpg
 .jpeg
+.gif
 
 Planned:
 .mp4
 .webm
-.gif
 
 
 Requirements:
