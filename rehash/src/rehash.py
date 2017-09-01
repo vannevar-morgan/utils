@@ -5,6 +5,7 @@ import os
 import random
 import png
 import piexif
+import binascii
 
 
 def make_rtext():
@@ -35,11 +36,21 @@ def rehash_jpg(jpg_filename):
     """
     mutate the meta data in a .jpg file to change the file hash    
     """
-    # exif_dict = piexif.load(jpg_filename)
-    # exif_bytes = piexif.dump(exif_dict)
-    exif_dict = {REHASH:make_rtext()}
+    exif_IFD = {piexif.ExifIFD.UserComment: str.encode(REHASH + COMMENT_SEP + make_rtext())}
+    exif_dict = {"Exif":exif_IFD}
     exif_bytes = piexif.dump(exif_dict)
     piexif.insert(exif_bytes, jpg_filename)
+    
+    # exif_dict = piexif.load(jpg_filename)
+    # comment_text = make_rtext()
+    # print("wrote to exif: " + comment_text)
+    # exif_dict["USER_COMMENT"] = comment_text
+    # exif_bytes = piexif.dump(exif_dict)
+    # piexif.insert(exif_bytes, jpg_filename)
+
+    # exif_dict = {REHASH:make_rtext()}
+    # exif_bytes = piexif.dump(exif_dict)
+    # piexif.insert(exif_bytes, jpg_filename)
 
 
 def rehash_gif(gif_filename):
@@ -65,6 +76,7 @@ def rehash_webm(webm_filename):
 
 MESSAGE_USAGE = "usage: rehash FILENAME"
 REHASH = "rehash"
+COMMENT_SEP = ": "
 SPACE = " "
 MESSAGE_NO_FILE = "is not a valid file."
 MESSAGE_FILE_EXT_UNKNOWN = "couldn't determine the file type... check file extension?"
