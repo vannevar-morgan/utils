@@ -1,0 +1,58 @@
+rehash is a utility to change the hash of a file.
+
+Rationale:
+
+some sites prevent posting media if a copy of that file already exists.
+they do this by comparing the file hash.
+altering the file will, with high probability, change the hash of the file.
+
+
+Notes:
+
+>currently there isn't a lot of error handling
+
+>rehash changes metadata for files in order to change the hash without changing the file content.
+
+>currently the file content may still be altered when used on an original file.
+>content will not be altered when used on files written by rehash
+>i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
+>      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
+>this is because the libraries used for reading and writing media files may not be intended for editing metadata and may provide no simple way of doing so.  when writing the rehash copy with different metadata the file content may be written differently (different compression or other image properties).
+>this is not anticipated to cause problems in normal usage and may be improved in the future.
+
+
+Usage:
+
+rehash FILENAME
+rehash -f FILENAME
+
+rehash FILENAME will write a (rehashed content) copy to "rehash_FILENAME"
+rehash -f FILENAME will (force) write (rehashed content) to the original filename.
+
+rehash -f FILENAME is not yet implemented
+
+
+
+It is expected rehash will be used on small (1 - 25 MB) media files such as those commonly posted on sites like reddit or 4chan.
+This isn't a hardcoded limit; only to say it isn't expected creating a copy of the file should be a problem.
+
+
+It is only planned to support media types commonly posted.
+
+Supported filetypes:
+.png
+.jpg
+.jpeg
+
+Planned:
+.mp4
+.webm
+.gif
+
+
+Requirements:
+python3
+purepng (pip3 install purepng)
+piexif  (pip3 install piexif)
+
+development is done on linux, support on windows and mac is untested.
