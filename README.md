@@ -43,16 +43,33 @@ Known Issues:
 Use wget when appropriate :)
 
 
+ofsme
+-------------------
+This is a text obfuscation tool but it's not finished and I've been working on other things, I'll come back to it eventually.
+
+NOT under active development.
+
+
+rehash
+-------------------
+Some sites prevent uploading duplicate files.  Usually this is done by taking the file hash and checking against hashes of files already uploaded.  rehash will add metadata to common media files so they will hash differently.  This will allow uploading duplicate files (unless the site uses other means to detect duplicates e.g., hashing the data not the file, or image analysis).
+
+Under active development.
+
+
+
 Repository Contents
 -------------------
 * **md.py** - Media Downloader for youtube, dailymotion, vevo, and clipfish
 * **8ch_scraper.py** - Media downloader for threads on 8ch.net
 * **ofsme** - Obfuscate Me, a tool to obfuscate your text from stylometric analysis and author attribution tools
+* **rehash** - Need to upload duplicate files??  Change the hash on common media files without changing the content (changes some metadata).
 
 
 License Information
 -------------------
 
-All code is released under [GNU GPLv3.0](http://www.gnu.org/copyleft/gpl.html).
+Released under [GNU GPLv3.0](http://www.gnu.org/copyleft/gpl.html).
 
+Please give credit by linking this page.
 If you find any errors please message about them.
