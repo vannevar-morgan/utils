@@ -65,7 +65,7 @@ def get_cblock_offset(gif_filename):
         pf_int = int.from_bytes(packed_field, byteorder="big")
         if(pf_int >> 7 == 1):
             # Global Color Table exists, increase offset by the size of the GCT
-            mask = ~(((1 << 5) - 1) << 3) # mask to extract GCT size
+            mask = ~(((1 << 5) - 1) << 3) # mask (00000111) to extract GCT size
             gct_bytes = 3 * 2**((pf_int & mask) + 1)
             assert(gct_bytes >= 6 and gct_bytes <= 768) # min gct size, max gct size
             offset += gct_bytes
@@ -86,8 +86,8 @@ def insert_gif_comment(gif_filename):
             gif_file.seek(comment_offset)
             data = gif_file.read()
             # insert comment block
-            gif_file.write(b"0x21") # extension introducer
-            gif_file.write(b"0xfe") # comment label
+            gif_file.write(b"\x21") # extension introducer
+            gif_file.write(b"\xfe") # comment label
             gif_file.write(str.encode(chr(len(comment)))) # data size
             gif_file.write(str.encode(comment)) # comment data
             gif_file.write(b"\x00") # block terminator
@@ -114,11 +114,36 @@ def rehash_mp4(mp4_filename):
     print("rehash_mp4()")
 
 
-def rehash_webm(webm_filename):
+def rehash_ebml(ebml_filename):
     """
-    Mutate the meta data in a .webm file to change the file hash    
+    Write a tag segment at the end of the specified ebml container
     """
-    print("rehash_webm()")
+    ebml_filename_out = REHASH + "_" + ebml_filename
+    with open(ebml_filename, "rb") as ebml_in, open(ebml_filename_out, "wb") as ebml_out:
+        comment = REHASH + COMMENT_SEP + make_rtext()
+        ebml_id_tags = b"\x12\x54\xc3\x67"
+        ebml_id_tag = b"\x73\x73"
+        ebml_id_targets = b"\x63\xc0"
+        ebml_id_simple_tag = b"\x67\xc8"
+        ebml_id_tag_name = b"\x45\xa3"
+        ebml_id_tag_language = b"\x44\x7a"
+        ebml_id_tag_default = b"\x44\x84"
+        ebml_id_tag_string = b"\x44\x87"
+        tag_name = b"COMMENT"
+        tag_language = b"eng"
+        tag_segment = (ebml_id_tags
+                       + ebml_id_tag
+                       + ebml_id_targets
+                       + ebml_id_simple_tag
+                       + (ebml_id_tag_name + tag_name)
+                       + (ebml_id_tag_language + tag_language)
+                       + ebml_id_tag_default
+                       + (ebml_id_tag_string + str.encode(comment))
+                       )
+        data = ebml_in.read()
+        ebml_out.write(data)
+        ebml_out.write(tag_segment)
+        
 
 
 MESSAGE_USAGE = "usage: rehash FILENAME"
@@ -149,7 +174,7 @@ if not os.path.isfile(target):
     sys.exit(1)
 
 # get the target file extension and compare to supported extensions
-FILETYPES = ("png", "jpg", "jpeg", "gif")
+FILETYPES = ("png", "jpg", "jpeg", "gif", "webm", "mkv")
 
 ext_split = os.path.splitext(target)
 target_ext = ext_split[1]
@@ -172,9 +197,11 @@ elif target_ext == "jpeg":
     rehash_jpg(target)
 elif target_ext == "gif":
     rehash_gif(target)
+elif target_ext == "webm":
+    rehash_ebml(target)
+elif target_ext == "mkv":
+    rehash_ebml(target)
 elif target_ext == "mp4":
     rehash_mp4(target)
-elif target_ext == "webm":
-    rehash_webm(target)
 else:
     pass

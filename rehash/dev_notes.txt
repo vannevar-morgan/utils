@@ -48,10 +48,11 @@ Supported filetypes:
 .jpg
 .jpeg
 .gif
+.mkv
+.webm
 
 Planned:
 .mp4
-.webm
 
 
 Requirements:
@@ -60,3 +61,14 @@ purepng (pip3 install purepng)
 piexif  (pip3 install piexif)
 
 development is done on linux, support on windows and mac is untested.
+
+
+Test Files:
+  >files in the test folder were used for testing.
+  >they're random files i could find and test with for each filetype supported.
+  >NOTE that vaporwave.webm shows errors when checked with mkvalidator:
+    -https://www.matroska.org/downloads/mkvalidator.html
+    -running rehash does not increase the error count on the output file
+  >the mkv sample file jellyfish-3-mbps-hd-h264.mkv was helpful and is from:
+    -http://jell.yfish.us/
+
