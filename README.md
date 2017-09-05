@@ -72,4 +72,5 @@ License Information
 Released under [GNU GPLv3.0](http://www.gnu.org/copyleft/gpl.html).
 
 Please give credit by linking this page.
+
 If you find any errors please message about them.
