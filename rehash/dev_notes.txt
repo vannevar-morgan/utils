@@ -9,32 +9,27 @@ altering the file will, with high probability, change the hash of the file.
 
 Notes:
 
->currently there isn't a lot of error handling
+>currently there isn't a ton of error handling
 
 >rehash changes metadata for files in order to change the hash without changing the file content:
   -rehash writes a tEXt chunk in .png files
   -rehash writes a UserComment in exif in .jpg / .jpeg files
+  -rehash inserts a comment block (after the GCT if present) in .gif files
+  -rehash writes a tag segment to the end of .mkv / .webm files
 
 
->currently the file content MAY still be altered when used on an original file.
-  -this does not apply to gif files, content is not altered in gif files when inserting comment blocks.
+>file content in .png files MAY be altered:
   -content will not be altered when used on files written by rehash (unless subsequently modified)
     *i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
     *      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
-  -this is because the libraries used for reading and writing media files may not be intended for editing metadata and may provide no simple way of doing so.  when writing the rehash copy with different metadata the file content may be written differently (different compression or other image properties).
+  -this is because the library used for reading and writing png files doesn't provide (as far as I can tell) a simple way of editing metadata.  when writing the rehash copy with different metadata the file content may be written differently (different compression, alpha, or other image properties).
   -this is not anticipated to cause problems in normal usage and may be improved in the future.
 
 
 Usage:
 
-rehash FILENAME
-rehash -f FILENAME
-
 rehash FILENAME will write a (rehashed content) copy to "rehash_FILENAME"
-rehash -f FILENAME will (force) write (rehashed content) to the original filename.
-
-rehash -f FILENAME is not yet implemented
-
+rehash -o FILENAME will overwrite to the original filename.
 
 
 It is expected rehash will be used on small (1 - 25 MB) media files such as those commonly posted on sites like reddit or 4chan.

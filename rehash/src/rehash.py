@@ -5,6 +5,8 @@ import os
 import random
 import png
 import piexif
+import argparse
+from shutil import copyfile
 
 
 def make_rtext():
@@ -19,7 +21,7 @@ def rehash_png(png_filename):
     Write a tEXt chunk in the png file to change the file hash
     """
     comment_text = make_rtext()
-    reader = png.Reader(target)
+    reader = png.Reader(png_filename)
     [width, height, pix, metadata] = reader.read()
     writer = png.Writer(**metadata)
     writer.set_text({REHASH:comment_text})
@@ -118,35 +120,31 @@ def rehash_ebml(ebml_filename):
     """
     Write a tag segment at the end of the specified ebml container
     """
-    ebml_filename_out = REHASH + "_" + ebml_filename
-    with open(ebml_filename, "rb") as ebml_in, open(ebml_filename_out, "wb") as ebml_out:
-        comment = REHASH + COMMENT_SEP + make_rtext()
-        ebml_id_tags = b"\x12\x54\xc3\x67"
-        ebml_id_tag = b"\x73\x73"
-        ebml_id_targets = b"\x63\xc0"
-        ebml_id_simple_tag = b"\x67\xc8"
-        ebml_id_tag_name = b"\x45\xa3"
-        ebml_id_tag_language = b"\x44\x7a"
-        ebml_id_tag_default = b"\x44\x84"
-        ebml_id_tag_string = b"\x44\x87"
-        tag_name = b"COMMENT"
-        tag_language = b"eng"
-        tag_segment = (ebml_id_tags
-                       + ebml_id_tag
-                       + ebml_id_targets
-                       + ebml_id_simple_tag
-                       + (ebml_id_tag_name + tag_name)
-                       + (ebml_id_tag_language + tag_language)
-                       + ebml_id_tag_default
-                       + (ebml_id_tag_string + str.encode(comment))
-                       )
-        data = ebml_in.read()
-        ebml_out.write(data)
-        ebml_out.write(tag_segment)
-        
+    comment = REHASH + COMMENT_SEP + make_rtext()
+    ebml_id_tags = b"\x12\x54\xc3\x67"
+    ebml_id_tag = b"\x73\x73"
+    ebml_id_targets = b"\x63\xc0"
+    ebml_id_simple_tag = b"\x67\xc8"
+    ebml_id_tag_name = b"\x45\xa3"
+    ebml_id_tag_language = b"\x44\x7a"
+    ebml_id_tag_default = b"\x44\x84"
+    ebml_id_tag_string = b"\x44\x87"
+    tag_name = b"COMMENT"
+    tag_language = b"eng"
+    tag_segment = (ebml_id_tags
+                   + ebml_id_tag
+                   + ebml_id_targets
+                   + ebml_id_simple_tag
+                   + (ebml_id_tag_name + tag_name)
+                   + (ebml_id_tag_language + tag_language)
+                   + ebml_id_tag_default
+                   + (ebml_id_tag_string + str.encode(comment))
+    )
+    with open(ebml_filename, "ab") as ebml_file:
+        ebml_file.write(tag_segment)
 
 
-MESSAGE_USAGE = "usage: rehash FILENAME"
+
 REHASH = "rehash"
 COMMENT_SEP = ": "
 SPACE = " "
@@ -164,11 +162,15 @@ GIF_HEADER_BYTES = 6
 GIF_LSD_BYTES = 7 # 7 bytes, logical screen descriptor
 GIF_PF_OFFSET = 10 # offset bytes to the packed field byte, 6 byte header + 4 bytes (logical screen width & height)
 
-if len(sys.argv) != 2:
-    print(MESSAGE_USAGE)
-    sys.exit(1)
 
-target = sys.argv[1]
+parser = argparse.ArgumentParser(description="Change the hash of a file.")
+parser.add_argument("-o", help="overwrite (write output to input file)", action="store_true")
+parser.add_argument("filename", help="change the hash of this file")
+
+args = parser.parse_args()
+
+target = args.filename
+    
 if not os.path.isfile(target):
     print(target + SPACE + MESSAGE_NO_FILE)
     sys.exit(1)
@@ -188,6 +190,11 @@ if target_ext not in FILETYPES:
 
 # filetype is known and supported
 #print("filetype is: " + target_ext) # change this to logging
+
+if not args.o:
+    new_filename = REHASH + "_" + target
+    copyfile(target, new_filename)
+    target = new_filename
 
 if target_ext == "png":
     rehash_png(target)
