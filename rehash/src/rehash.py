@@ -81,7 +81,7 @@ def insert_gif_comment(gif_filename):
     Insert comment block in the specified gif file
     """
     if not check_gif_vs_support(gif_filename):
-        # print(MESSAGE_GIF_VERSION_ERROR)
+        print(MESSAGE_GIF_VERSION_ERROR)
         return
     else:
         comment = "rehash: " + make_rtext()
@@ -108,7 +108,7 @@ def rehash_gif(gif_filename):
     try:
         insert_gif_comment(gif_filename)
     except:
-        # print(MESSAGE_GIF_INSERT_ERROR)
+        print(MESSAGE_GIF_INSERT_ERROR)
         return
 
 
@@ -179,7 +179,7 @@ def is_filetype_supported(filename):
     MESSAGE_FILE_EXT_UNSUPPORTED = "file type is unsupported."
     
     if not os.path.isfile(filename):
-        # print(filename + " " + MESSAGE_NO_FILE)
+        print(filename + " " + MESSAGE_NO_FILE)
         return None
     
     # get the filename file extension and compare to supported extensions
@@ -188,16 +188,24 @@ def is_filetype_supported(filename):
     ext_split = os.path.splitext(filename)
     file_ext = ext_split[1]
     if (not file_ext) or file_ext == os.path.extsep:
-        # print(MESSAGE_FILE_EXT_UNKNOWN)
+        print(MESSAGE_FILE_EXT_UNKNOWN)
         return None
     file_ext = (file_ext[1:]).lower() # remove extension separator, make extension lower
     if file_ext not in FILETYPES:
-        # print(MESSAGE_FILE_EXT_UNSUPPORTED)
+        print(MESSAGE_FILE_EXT_UNSUPPORTED)
         return None
     # filetype is known and supported
     return file_ext
     
 
+def get_rehash_filename(filename):
+    """
+    Return the filename rehash will write to if NOT overwriting filename.
+    """
+    pname, fname = os.path.split(filename)
+    return os.path.join(pname, "rehash_" + fname)    
+    
+    
 def main(argv):
     """
     """
@@ -213,7 +221,7 @@ def main(argv):
         sys.exit(1)
 
     if not args.o:
-        new_filename = "rehash_" + filename
+        new_filename = get_rehash_filename(filename)
         copyfile(filename, new_filename)
         filename = new_filename
     
