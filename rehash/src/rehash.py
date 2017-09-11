@@ -1,33 +1,103 @@
-#! /usr/bin/env python3.4
+#! /usr/bin/env python3
 
 import sys
 import os
 import random
-import png
 import piexif
 import argparse
 from shutil import copyfile
+import binascii
 
 
 def make_rtext():
     """
     Return a random string
     """
-    return "{0:06d}".format(random.randint(0,999999))
+    return "{0:09d}".format(random.randint(0,999999999))
+
+
+def is_png(png_filename):
+    """
+    Check if the file begins with the PNG signature.
+
+    Return the offset to the beginning of the IHDR chunk if it's a PNG file.
+    (This offset will be PNG_SIG_LEN unless the file is not PNG)
+
+    Return None if the file is not a PNG file.
+    """
+    PNG_SIG = b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a" # png signature
+    PNG_SIG_LEN = 8
+    try:
+        with open(png_filename, "rb") as png_file:
+            sig = png_file.read(PNG_SIG_LEN)
+            if sig == PNG_SIG:
+                return PNG_SIG_LEN
+            else:
+                return None
+    except:
+        return None
+    
+
+def get_png_ihdr_size(png_filename, ihdr_offset):
+    """
+    Return the size in bytes of the PNG IHDR chunk.
+    """
+    CHUNK_FIELD_LEN = 4 # size in bytes for the length, chunk type, & crc fields
+    ihdr_size = None
+    with open(png_filename, "rb") as png_file:
+        png_file.seek(ihdr_offset)
+        # read the length field of IHDR chunk, which represents the length of the chunk data field
+        ihdr_data_len = png_file.read(CHUNK_FIELD_LEN)
+        ihdr_size = (3 * CHUNK_FIELD_LEN) + int.from_bytes(ihdr_data_len, byteorder="big")
+    assert(ihdr_size <= (2**31) - 1) # max chunk size
+    return ihdr_size
+
+
+def make_png_text_chunk():
+    """
+    Return a text chunk to write to a PNG file.
+    """
+    CHUNK_FIELD_LEN = 4 # size in bytes for the length, chunk type, & crc fields
+    comment = "rehash: " + make_rtext()
+    CHUNK_TYPE = b"\x74\x45\x58\x74"
+    CHUNK_DATA = b"Comment\x00" + str.encode(comment)
+    # CHUNK_DATA_LENGTH_UNPADDED = str.encode(chr(len(CHUNK_DATA))) # chunk data length, unpadded (must be 4 bytes, padded)
+    # CHUNK_DATA_LENGTH = b"\x00" * (CHUNK_FIELD_LEN - len(CHUNK_DATA_LENGTH_UNPADDED)) + CHUNK_DATA_LENGTH_UNPADDED
+    CHUNK_DATA_LENGTH = bytes.fromhex("{0:08x}".format(len(CHUNK_DATA)))
+    crc = binascii.crc32(CHUNK_TYPE + CHUNK_DATA) & 0xffffffff
+    crc_hex = "{0:08x}".format(crc)
+    CHUNK_CRC = bytes.fromhex(crc_hex)
+    return CHUNK_DATA_LENGTH + CHUNK_TYPE + CHUNK_DATA + CHUNK_CRC
 
 
 def rehash_png(png_filename):
     """
     Write a tEXt chunk in the png file to change the file hash
     """
-    comment_text = make_rtext()
-    reader = png.Reader(png_filename)
-    [width, height, pix, metadata] = reader.read()
-    writer = png.Writer(**metadata)
-    writer.set_text({"rehash":comment_text})
-    with open(png_filename, "wb") as out_file:
-        # png.Writer(**metadata).write(out_file, pix)
-        writer.write(out_file, pix)
+    ihdr_beg = is_png(png_filename)
+    if ihdr_beg:
+        ihdr_len = get_png_ihdr_size(png_filename, ihdr_beg)
+        with open(png_filename, "r+b") as png_file:
+            png_file.seek(ihdr_beg + ihdr_len)
+            data = png_file.read()
+            png_file.seek(ihdr_beg + ihdr_len)
+            png_file.write(make_png_text_chunk())
+            png_file.write(data)
+            png_file.truncate()
+
+
+# def rehash_png(png_filename):
+#     """
+#     Write a tEXt chunk in the png file to change the file hash
+#     """
+#     comment_text = make_rtext()
+#     reader = png.Reader(png_filename)
+#     [width, height, pix, metadata] = reader.read()
+#     writer = png.Writer(**metadata)
+#     writer.set_text({"rehash":comment_text})
+#     with open(png_filename, "wb") as out_file:
+#         # png.Writer(**metadata).write(out_file, pix)
+#         writer.write(out_file, pix)
 
 
 def rehash_jpg(jpg_filename):
@@ -211,21 +281,21 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(description="Change the hash of a file.")
     parser.add_argument("-o", help="overwrite (write output to input file)", action="store_true")
-    parser.add_argument("filename", help="change the hash of this file")
-    
+    parser.add_argument("filenames", nargs="+", help="change the hash of these file(s)")
     args = parser.parse_args(argv[1:])
     
-    filename = args.filename
-    file_ext = is_filetype_supported(filename)
-    if not file_ext:
-        sys.exit(1)
-
-    if not args.o:
-        new_filename = get_rehash_filename(filename)
-        copyfile(filename, new_filename)
-        filename = new_filename
-    
-    do_rehash(filename, file_ext)
+    filenames = args.filenames
+    for fname in filenames:
+        # print(fname)
+        file_ext = is_filetype_supported(fname)
+        if file_ext:
+            if not args.o:
+                new_fname = get_rehash_filename(fname)
+                copyfile(fname, new_fname)
+                fname = new_fname
+            do_rehash(fname, file_ext)
+        else:
+            pass
 
 
 if __name__ == "__main__":

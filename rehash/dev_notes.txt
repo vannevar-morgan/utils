@@ -1,9 +1,9 @@
-rehash is a utility to change the hash of a file.
+rehash is a utility to change file hashes.
 
 Rationale:
 
 some sites prevent posting media if a copy of that file already exists.
-they do this by comparing the file hash.
+they (usually) do this by comparing the file hash.
 altering the file will, with high probability, change the hash of the file.
 
 
@@ -12,24 +12,16 @@ Notes:
 >currently there isn't a ton of error handling
 
 >rehash changes metadata for files in order to change the hash without changing the file content:
-  -rehash writes a tEXt chunk in .png files
+  -rehash inserts a tEXt chunk (after the IHDR chunk) in .png files
   -rehash writes a UserComment in exif in .jpg / .jpeg files
   -rehash inserts a comment block (after the GCT if present) in .gif files
   -rehash writes a tag segment to the end of .mkv / .webm files
 
 
->file content in .png files MAY be altered:
-  -content will not be altered when used on files written by rehash (unless subsequently modified)
-    *i.e., rehash cat.png creates rehash_cat.png, file content of rehash_cat.png MAY be different.
-    *      rehash rehash_cat.png creates rehash_rehash_cat.png, file content of rehash_rehash_cat.png will NOT be different.
-  -this is because the library used for reading and writing png files doesn't provide (as far as I can tell) a simple way of editing metadata.  when writing the rehash copy with different metadata the file content may be written differently (different compression, alpha, or other image properties).
-  -this is not anticipated to cause problems in normal usage and may be improved in the future.
-
-
 Usage:
 
-rehash FILENAME will write a (rehashed content) copy to "rehash_FILENAME"
-rehash -o FILENAME will overwrite to the original filename.
+rehash FILENAME1, FILENAME2, ...       will write to "rehash_FILENAME"
+rehash -o FILENAME1, FILENAME2, ...    will overwrite to the original filename.
 
 
 It is expected rehash will be used on small (1 - 25 MB) media files such as those commonly posted on sites like reddit or 4chan.
@@ -52,8 +44,7 @@ Planned:
 
 Requirements:
 python3
-purepng (pip3 install purepng)
-piexif  (pip3 install piexif)
+piexif (pip3 install piexif)
 
 development is done on linux, support on windows and mac is untested.
 
@@ -61,9 +52,9 @@ development is done on linux, support on windows and mac is untested.
 Test Files:
   >files in the test folder were used for testing.
   >they're random files i could find and test with for each filetype supported.
-  >NOTE that vaporwave.webm shows errors when checked with mkvalidator:
+  >NOTE that test.webm shows errors when checked with mkvalidator:
     -https://www.matroska.org/downloads/mkvalidator.html
     -running rehash does not increase the error count on the output file
-  >the mkv sample file jellyfish-3-mbps-hd-h264.mkv was helpful and is from:
+  >the mkv sample file test.mkv was helpful and is from:
     -http://jell.yfish.us/
 
