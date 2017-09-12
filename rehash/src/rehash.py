@@ -116,7 +116,6 @@ def check_gif_vs_support(gif_filename):
     Confirm gif file version is "GIF89a" so comment blocks are supported
     """
     GIF_HEADER_BYTES = 6
-    MESSAGE_GIF_VERSION_ERROR = "gif version is not supported (gif version must be \"GIF89a\" to support comment blocks)... try updating gif file version?"
     with open(gif_filename, "rb") as in_file:
         if in_file.read(GIF_HEADER_BYTES) != b"GIF89a":
             return False
@@ -151,6 +150,7 @@ def insert_gif_comment(gif_filename):
     Insert comment block in the specified gif file
     """
     if not check_gif_vs_support(gif_filename):
+        MESSAGE_GIF_VERSION_ERROR = "gif version is not supported (gif version must be \"GIF89a\" to support comment blocks)... try updating gif file version?"
         print(MESSAGE_GIF_VERSION_ERROR)
         return
     else:
