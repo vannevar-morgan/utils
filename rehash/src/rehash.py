@@ -100,15 +100,29 @@ def rehash_png(png_filename):
 #         writer.write(out_file, pix)
 
 
+# def writeExifComment(filename,comment):
+
+#     im = Image.open(filename)
+#     fileExtension = os.path.splitext(filename)[1]
+#     exif_dict = piexif.load(im.info["exif"])
+#     exif_dict["Exif"][piexif.ExifIFD.UserComment] = comment
+#     exif_bytes = piexif.dump(exif_dict)
+#     im.save(filename, 'jpeg', exif=exif_bytes)
+#     im.close()
+
 def rehash_jpg(jpg_filename):
     """
     Write ExifIFD.UserComment in jpg exif to change the file hash    
     """
-    exif_IFD = {piexif.ExifIFD.UserComment: str.encode("\0\0\0\0\0\0\0\0rehash: " + make_rtext())}
+    MESSAGE_JPG_INSERT_ERROR = "couldn't insert UserComment for this image..."
+    exif_IFD = {piexif.ExifIFD.UserComment: str.encode("rehash: " + make_rtext())}
     # exif_IFD = {piexif.ImageIFD.ImageDescription: "abcdefghijklmnopqrstuvwxyz0123456789"}
     exif_dict = {"Exif":exif_IFD}
     exif_bytes = piexif.dump(exif_dict)
-    piexif.insert(exif_bytes, jpg_filename)
+    try:
+        piexif.insert(exif_bytes, jpg_filename)
+    except piexif.InvalidImageDataError:
+        print(MESSAGE_JPG_INSERT_ERROR)
 
 
 def check_gif_vs_support(gif_filename):

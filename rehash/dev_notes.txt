@@ -11,6 +11,8 @@ Notes:
 
 >currently there isn't a ton of error handling
 
+>piexif, the library used for handling .jpg / .jpeg files, has incomplete support for the UserComment field.  working with some files will throw piexif.InvalidImageDataError.  i may re-write the code for handling jpg files to eliminate this dependency.
+
 >rehash changes metadata for files in order to change the hash without changing the file content:
   -rehash inserts a tEXt chunk (after the IHDR chunk) in .png files
   -rehash writes a UserComment in exif in .jpg / .jpeg files
