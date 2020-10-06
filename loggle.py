@@ -136,12 +136,10 @@ def do_report(enabled):
     if HITS:
         if enabled:
             print("\nEnabled all instances of:\n")
-            print(KEYS)
-            print("\nfound in these files:\n")
         else:
             print("\nDisabled all instances of:\n")
-            print(KEYS)
-            print("\nfound in these files:\n")
+        print(KEYS)
+        print("\nfound in these files:\n")
         print(HITS)
     else:
         print("\nFound no instances of:\n")
