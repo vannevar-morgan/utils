@@ -43,6 +43,11 @@ Known Issues:
 Use wget when appropriate :)
 
 
+loggle.py
+-------------------
+This is a script to toggle commented / uncommented prints and logs in code.  Written to easily enable / disable prints and logs in mobile apps written in dart + flutter for release builds.  But it should be flexible enough to support other languages and use cases.
+
+
 ofsme
 -------------------
 This is a text obfuscation tool but it's not finished and I've been working on other things, I'll come back to it eventually.
