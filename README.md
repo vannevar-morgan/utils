@@ -67,6 +67,7 @@ Repository Contents
 -------------------
 * **md.py** - Media Downloader for youtube, dailymotion, vevo, and clipfish
 * **8ch_scraper.py** - Media downloader for threads on 8ch.net
+* **loggle.py** - (Log Toggle) Script to easily toggle commented / uncommented status for prints and log statements.
 * **ofsme** - Obfuscate Me, a tool to obfuscate your text from stylometric analysis and author attribution tools
 * **rehash** - Need to upload duplicate files??  Change the hash on common media files without changing the content (changes some metadata).
 
