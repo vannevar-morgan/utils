@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 FILE_TYPES = [".dart", ".py", ".cpp", ".c"] # list of supported file types to inspect.  you can change this if needed.
-KEYS = ["import 'dart:developer';", "log(", "print("] # keys that lines must begin with for a line to be toggled (must begin with = ignoring whitespace, SELF_KEY, and comments.  you can change this if needed.
+KEYS = ["import 'dart:developer';", "log(", "print(", "debugPrint("] # keys that lines must begin with for a line to be toggled (must begin with = ignoring whitespace, SELF_KEY, and comments.  you can change this if needed.
 # if a keys file is provided, it should be plaintext, 1 key per line.
 COMMENT_KEY = "//" # key signaling the beginning of a comment.  you can change this if needed.
 SELF_KEY = "cec339cd" # last 8 chars of whirlpool hash of "log toggled by loggle.py".  SELF_KEY is used to identify lines that have been toggled by loggle.py.  you can change this if needed.  ideally it should be a short, unique string to avoid false matches and maintain readability.  NOTE: after running this script in disable mode, if you remove this tag from a line it will not be found by this script and will not be re-enabled.
