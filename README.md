@@ -23,26 +23,6 @@ Known Issues:
 >Note that for vevo links, you must use the share link as the url for the video to download.  Otherwise the converter service can't find the video.
 
 
-8ch_scraper.py
--------------------
-8ch_scraper.py is a media downloader for threads on 8ch.net.
-
-Its intended usage is:
->./8ch_scraper thread_url dl_dir=./8ch_media_(op_postnum), force_download=False
-
->use a new tab in terminal for each thread you're monitoring.
-
->re-run the script occasionally to download new files posted to the thread.
-
-Known Issues:
-
->Sometimes a file posted to a thread will be downloaded each time the script is run - even if the file already exists (normally, existing files are skipped).  If the file already exists, the new filename will be appended to with a random number so as not to overwrite the original file, unless the force_download flag is set to True.
-
->Untested on .pdf files
-
-Use wget when appropriate :)
-
-
 loggle.py
 -------------------
 This is a script to toggle commented / uncommented prints and logs in code.  Written to easily enable / disable prints and logs in mobile apps written in dart + flutter for release builds.  But it should be flexible enough to support other languages and use cases.
